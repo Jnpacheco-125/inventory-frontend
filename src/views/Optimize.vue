@@ -1,21 +1,21 @@
 <template>
   <div class="container mt-4">
-    <h2>🎯 Otimização de Produção</h2>
+    <h2>🎯 Production Optimization</h2>
     
     <div class="row mb-4">
       <div class="col-md-4">
-        <label class="form-label">Mostrar top</label>
+        <label class="form-label">Show top</label>
         <select v-model="topN" class="form-select" @change="loadOptimization">
-          <option value="3">3 produtos</option>
-          <option value="5">5 produtos</option>
-          <option value="10">10 produtos</option>
+          <option value="3">3 products</option>
+          <option value="5">5 products</option>
+          <option value="10">10 products</option>
         </select>
       </div>
     </div>
 
     <div v-if="loading" class="text-center">
       <div class="spinner-border text-primary" role="status">
-        <span class="visually-hidden">Carregando...</span>
+        <span class="visually-hidden">Loading...</span>
       </div>
     </div>
 
@@ -24,21 +24,21 @@
     </div>
 
     <div v-else>
-      <!-- Melhor produto -->
+      <!-- Best product -->
       <div class="card mb-4 border-success">
         <div class="card-header bg-success text-white">
-          <h4>🏆 Produto Recomendado</h4>
+          <h4>🏆 Recommended Product</h4>
         </div>
         <div class="card-body">
           <h5 class="card-title">{{ bestProduct?.name }}</h5>
-          <p><strong>Quantidade:</strong> {{ bestProduct?.quantity }} unidades</p>
-          <p><strong>Lucro total:</strong> R$ {{ formatCurrency(bestProduct?.totalProfit) }}</p>
-          <p><strong>Material limitante:</strong> {{ bestProduct?.limitingMaterial }}</p>
+          <p><strong>Quantity:</strong> {{ bestProduct?.quantity }} units</p>
+          <p><strong>Total profit:</strong> $ {{ formatCurrency(bestProduct?.totalProfit) }}</p>
+          <p><strong>Limiting material:</strong> {{ bestProduct?.limitingMaterial }}</p>
         </div>
       </div>
 
-      <!-- Lista de produtos analisados -->
-      <h4>📊 Análise dos Produtos</h4>
+      <!-- Product analysis list -->
+      <h4>📊 Product Analysis</h4>
       <div class="row">
         <div v-for="product in analyses" :key="product.id" class="col-md-4 mb-3">
           <div class="card">
@@ -46,12 +46,12 @@
               <h5>{{ product.name }}</h5>
             </div>
             <div class="card-body">
-              <p><strong>Lucro/unidade:</strong> R$ {{ formatCurrency(product.profitPerUnit) }}</p>
-              <p><strong>Unidades possíveis:</strong> {{ product.maxUnitsPossible }}</p>
-              <p><strong>Lucro total:</strong> R$ {{ formatCurrency(product.totalPossibleProfit) }}</p>
-              <p><strong>Material limitante:</strong> {{ product.limitingMaterial }}</p>
+              <p><strong>Profit/unit:</strong> $ {{ formatCurrency(product.profitPerUnit) }}</p>
+              <p><strong>Possible units:</strong> {{ product.maxUnitsPossible }}</p>
+              <p><strong>Total profit:</strong> $ {{ formatCurrency(product.totalPossibleProfit) }}</p>
+              <p><strong>Limiting material:</strong> {{ product.limitingMaterial }}</p>
               
-              <h6>Composição por unidade:</h6>
+              <h6>Composition per unit:</h6>
               <ul>
                 <li v-for="(qty, material) in product.materialsRequired" :key="material">
                   {{ material }}: {{ qty }}
@@ -62,10 +62,10 @@
         </div>
       </div>
 
-      <!-- Estoque restante -->
+      <!-- Remaining stock -->
       <div class="card mt-4">
         <div class="card-header bg-info text-white">
-          <h4>📦 Estoque Restante</h4>
+          <h4>📦 Remaining Stock</h4>
         </div>
         <div class="card-body">
           <div class="row">
@@ -76,7 +76,7 @@
         </div>
       </div>
 
-      <!-- Recomendação em texto -->
+      <!-- Text recommendation -->
       <div class="alert alert-secondary mt-4">
         <pre>{{ recommendation }}</pre>
       </div>
@@ -100,7 +100,7 @@ export default {
     const recommendation = ref('');
 
     const formatCurrency = (value) => {
-      return value?.toFixed(2).replace('.', ',') || '0,00';
+      return value?.toFixed(2) || '0.00';
     };
 
     const loadOptimization = async () => {
@@ -121,7 +121,7 @@ export default {
         
         error.value = null;
       } catch (err) {
-        error.value = 'Erro ao carregar otimização';
+        error.value = 'Error loading optimization';
         console.error(err);
       } finally {
         loading.value = false;

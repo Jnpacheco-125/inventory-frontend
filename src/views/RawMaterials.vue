@@ -1,10 +1,10 @@
 <template>
   <div class="container mt-4">
-    <h2>📦 Matérias-Primas</h2>
+    <h2>📦 Raw Materials</h2>
     
     <div v-if="loading" class="text-center">
       <div class="spinner-border text-primary" role="status">
-        <span class="visually-hidden">Carregando...</span>
+        <span class="visually-hidden">Loading...</span>
       </div>
     </div>
     
@@ -13,19 +13,19 @@
     </div>
     
     <div v-else>
-      <button class="btn btn-success mb-3" @click="showCreateModal = true">
-        ➕ Nova Matéria-Prima
+      <button class="btn btn-success mb-3" @click="openCreateModal">
+        ➕ New Raw Material
       </button>
       
       <table class="table table-striped">
         <thead>
           <tr>
             <th>ID</th>
-            <th>Código</th>
-            <th>Nome</th>
-            <th>Quantidade</th>
-            <th>Unidade</th>
-            <th>Ações</th>
+            <th>Code</th>
+            <th>Name</th>
+            <th>Quantity</th>
+            <th>Unit</th>
+            <th>Actions</th>
           </tr>
         </thead>
         <tbody>
@@ -36,70 +36,70 @@
             <td>{{ item.stockQuantity }}</td>
             <td>{{ item.unitOfMeasure }}</td>
             <td>
-              <button class="btn btn-sm btn-warning" @click="edit(item)">✏️</button>
-              <button class="btn btn-sm btn-danger" @click="confirmDelete(item)">🗑️</button>
-              <button class="btn btn-sm btn-info" @click="openStockModal(item)">📊</button>
+              <button class="btn btn-sm btn-warning me-1" @click="edit(item)">✏️ Edit</button>
+              <button class="btn btn-sm btn-danger me-1" @click="confirmDelete(item)">🗑️ Delete</button>
+              <button class="btn btn-sm btn-info" @click="openStockModal(item)">📊 Stock</button>
             </td>
           </tr>
         </tbody>
       </table>
     </div>
 
-    <!-- Modal de criação/edição -->
+    <!-- Create/Edit Modal -->
     <div v-if="showCreateModal" class="modal show d-block" tabindex="-1">
       <div class="modal-dialog">
         <div class="modal-content">
           <div class="modal-header">
-            <h5 class="modal-title">{{ editing ? 'Editar' : 'Nova' }} Matéria-Prima</h5>
+            <h5 class="modal-title">{{ editing ? 'Edit' : 'New' }} Raw Material</h5>
             <button type="button" class="btn-close" @click="closeModal"></button>
           </div>
           <div class="modal-body">
             <form @submit.prevent="save">
               <div class="mb-3">
-                <label class="form-label">Código</label>
+                <label class="form-label">Code</label>
                 <input v-model="form.code" class="form-control" required>
               </div>
               <div class="mb-3">
-                <label class="form-label">Nome</label>
+                <label class="form-label">Name</label>
                 <input v-model="form.name" class="form-control" required>
               </div>
               <div class="mb-3">
-                <label class="form-label">Quantidade em Estoque</label>
+                <label class="form-label">Stock Quantity</label>
                 <input v-model.number="form.stockQuantity" type="number" step="0.01" class="form-control" required>
               </div>
               <div class="mb-3">
-                <label class="form-label">Unidade de Medida</label>
+                <label class="form-label">Unit of Measure</label>
                 <select v-model="form.unitOfMeasure" class="form-select" required>
                   <option value="kg">kg</option>
                   <option value="g">g</option>
                   <option value="L">L</option>
                   <option value="ml">ml</option>
-                  <option value="unidade">unidade</option>
+                  <option value="unit">unit</option>
                 </select>
               </div>
-              <button type="submit" class="btn btn-primary">Salvar</button>
+              <button type="submit" class="btn btn-primary">Save</button>
             </form>
           </div>
         </div>
       </div>
     </div>
 
-    <!-- Modal de ajuste de estoque -->
+    <!-- Stock Adjustment Modal -->
     <div v-if="showStockModal" class="modal show d-block" tabindex="-1">
       <div class="modal-dialog">
         <div class="modal-content">
           <div class="modal-header">
-            <h5 class="modal-title">Ajustar Estoque - {{ selectedMaterial?.name }}</h5>
+            <h5 class="modal-title">Adjust Stock - {{ selectedMaterial?.name }}</h5>
             <button type="button" class="btn-close" @click="showStockModal = false"></button>
           </div>
           <div class="modal-body">
-            <p>Estoque atual: <strong>{{ selectedMaterial?.stockQuantity }} {{ selectedMaterial?.unitOfMeasure }}</strong></p>
+            <p>Current stock: <strong>{{ selectedMaterial?.stockQuantity }} {{ selectedMaterial?.unitOfMeasure }}</strong></p>
             <div class="mb-3">
-              <label class="form-label">Quantidade</label>
+              <label class="form-label">Quantity</label>
               <input v-model.number="stockQuantity" type="number" step="0.01" class="form-control">
             </div>
-            <button class="btn btn-success me-2" @click="addStock">Adicionar</button>
-            <button class="btn btn-warning" @click="removeStock">Remover</button>
+            <button class="btn btn-success me-2" @click="addStock">Add</button>
+            <button class="btn btn-warning" @click="removeStock">Remove</button>
           </div>
         </div>
       </div>
@@ -112,6 +112,7 @@ import { ref, reactive, onMounted } from 'vue';
 import rawMaterialApi from '../api/rawMaterial';
 
 export default {
+  name: 'RawMaterialsView',
   setup() {
     const materials = ref([]);
     const loading = ref(true);
@@ -136,7 +137,7 @@ export default {
         materials.value = response.data;
         error.value = null;
       } catch (err) {
-        error.value = 'Erro ao carregar matérias-primas';
+        error.value = 'Error loading raw materials';
         console.error(err);
       } finally {
         loading.value = false;
@@ -161,7 +162,7 @@ export default {
         await loadMaterials();
         closeModal();
       } catch (err) {
-        alert('Erro ao salvar: ' + (err.response?.data?.error || err.message));
+        alert('Error saving: ' + (err.response?.data?.error || err.message));
       }
     };
 
@@ -176,14 +177,19 @@ export default {
     };
 
     const confirmDelete = async (item) => {
-      if (confirm(`Deseja realmente deletar ${item.name}?`)) {
+      if (confirm(`Are you sure you want to delete ${item.name}?`)) {
         try {
           await rawMaterialApi.delete(item.id);
           await loadMaterials();
         } catch (err) {
-          alert('Erro ao deletar: ' + (err.response?.data?.error || err.message));
+          alert('Error deleting: ' + (err.response?.data?.error || err.message));
         }
       }
+    };
+
+    const openCreateModal = () => {
+      resetForm();
+      showCreateModal.value = true;
     };
 
     const openStockModal = (item) => {
@@ -198,7 +204,7 @@ export default {
         await loadMaterials();
         showStockModal.value = false;
       } catch (err) {
-        alert('Erro ao adicionar: ' + (err.response?.data?.error || err.message));
+        alert('Error adding stock: ' + (err.response?.data?.error || err.message));
       }
     };
 
@@ -208,7 +214,7 @@ export default {
         await loadMaterials();
         showStockModal.value = false;
       } catch (err) {
-        alert('Erro ao remover: ' + (err.response?.data?.error || err.message));
+        alert('Error removing stock: ' + (err.response?.data?.error || err.message));
       }
     };
 
@@ -233,6 +239,7 @@ export default {
       save,
       edit,
       confirmDelete,
+      openCreateModal,
       openStockModal,
       addStock,
       removeStock,

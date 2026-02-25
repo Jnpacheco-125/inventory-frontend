@@ -1,35 +1,35 @@
 <template>
   <div class="container mt-4">
-    <h2>📋 Produtos</h2>
+    <h2>📋 Products</h2>
     
     <div v-if="loading" class="text-center">
       <div class="spinner-border text-primary" role="status">
-        <span class="visually-hidden">Carregando...</span>
+        <span class="visually-hidden">Loading...</span>
       </div>
     </div>
     
     <div v-else-if="error" class="alert alert-danger">
       {{ error }}
       <button class="btn btn-outline-danger mt-2" @click="loadProducts">
-        🔄 Tentar novamente
+        🔄 Try Again
       </button>
     </div>
     
     <div v-else>
       <button class="btn btn-success mb-3" @click="openCreateModal">
-        ➕ Novo Produto
+        ➕ New Product
       </button>
       
       <table class="table table-striped">
         <thead>
           <tr>
             <th>ID</th>
-            <th>Código</th>
-            <th>Nome</th>
-            <th>Preço</th>
-            <th>Lucro</th>
-            <th>Composição</th>
-            <th>Ações</th>
+            <th>Code</th>
+            <th>Name</th>
+            <th>Price</th>
+            <th>Profit</th>
+            <th>Composition</th>
+            <th>Actions</th>
           </tr>
         </thead>
         <tbody>
@@ -37,19 +37,19 @@
             <td>{{ product.id }}</td>
             <td>{{ product.code }}</td>
             <td>{{ product.name }}</td>
-            <td>R$ {{ formatCurrency(product.price) }}</td>
-            <td>R$ {{ formatCurrency(product.profit) }}</td>
+            <td>$ {{ formatCurrency(product.price) }}</td>
+            <td>$ {{ formatCurrency(product.profit) }}</td>
             <td>
               <button class="btn btn-sm btn-info" @click="viewComposition(product)">
-                👁️ Ver
+                👁️ View
               </button>
             </td>
             <td>
               <button class="btn btn-sm btn-warning me-1" @click="editProduct(product)">
-                ✏️
+                ✏️ Edit
               </button>
               <button class="btn btn-sm btn-danger" @click="confirmDelete(product)">
-                🗑️
+                🗑️ Delete
               </button>
             </td>
           </tr>
@@ -57,21 +57,21 @@
       </table>
     </div>
 
-    <!-- Modal de Composição -->
+    <!-- Composition Modal -->
     <div v-if="showCompositionModal" class="modal show d-block" tabindex="-1">
       <div class="modal-dialog">
         <div class="modal-content">
           <div class="modal-header">
-            <h5 class="modal-title">Composição - {{ selectedProduct?.name }}</h5>
+            <h5 class="modal-title">Composition - {{ selectedProduct?.name }}</h5>
             <button type="button" class="btn-close" @click="showCompositionModal = false"></button>
           </div>
           <div class="modal-body">
             <table class="table table-sm">
               <thead>
                 <tr>
-                  <th>Matéria-Prima</th>
-                  <th>Quantidade</th>
-                  <th>Unidade</th>
+                  <th>Raw Material</th>
+                  <th>Quantity</th>
+                  <th>Unit</th>
                 </tr>
               </thead>
               <tbody>
@@ -87,52 +87,52 @@
       </div>
     </div>
 
-    <!-- Modal de Criar/Editar Produto -->
+    <!-- Create/Edit Product Modal -->
     <div v-if="showProductModal" class="modal show d-block" tabindex="-1">
       <div class="modal-dialog modal-lg">
         <div class="modal-content">
           <div class="modal-header">
-            <h5 class="modal-title">{{ editing ? 'Editar' : 'Novo' }} Produto</h5>
+            <h5 class="modal-title">{{ editing ? 'Edit' : 'New' }} Product</h5>
             <button type="button" class="btn-close" @click="closeModal"></button>
           </div>
           <div class="modal-body">
             <form @submit.prevent="saveProduct">
               <div class="row">
                 <div class="col-md-6 mb-3">
-                  <label class="form-label">Código</label>
+                  <label class="form-label">Code</label>
                   <input v-model="form.code" class="form-control" required>
                 </div>
                 <div class="col-md-6 mb-3">
-                  <label class="form-label">Nome</label>
+                  <label class="form-label">Name</label>
                   <input v-model="form.name" class="form-control" required>
                 </div>
               </div>
               
               <div class="row">
                 <div class="col-md-6 mb-3">
-                  <label class="form-label">Preço (R$)</label>
+                  <label class="form-label">Price ($)</label>
                   <input v-model.number="form.price" type="number" step="0.01" class="form-control" required>
                 </div>
                 <div class="col-md-6 mb-3">
-                  <label class="form-label">Lucro (R$)</label>
+                  <label class="form-label">Profit ($)</label>
                   <input v-model.number="form.profit" type="number" step="0.01" class="form-control" required>
                 </div>
               </div>
 
-              <h5 class="mt-3">Composição do Produto</h5>
-              <p class="text-muted small">Selecione as matérias-primas e quantidades necessárias</p>
+              <h5 class="mt-3">Product Composition</h5>
+              <p class="text-muted small">Select raw materials and required quantities</p>
 
               <div v-for="(item, index) in form.composition" :key="index" class="row mb-2">
                 <div class="col-md-5">
                   <select v-model="item.rawMaterialCode" class="form-select" required>
-                    <option value="">Selecione...</option>
+                    <option value="">Select...</option>
                     <option v-for="material in rawMaterials" :key="material.code" :value="material.code">
                       {{ material.name }} ({{ material.unitOfMeasure }})
                     </option>
                   </select>
                 </div>
                 <div class="col-md-4">
-                  <input v-model.number="item.requiredQuantity" type="number" step="0.01" class="form-control" placeholder="Quantidade" required>
+                  <input v-model.number="item.requiredQuantity" type="number" step="0.01" class="form-control" placeholder="Quantity" required>
                 </div>
                 <div class="col-md-2">
                   <button type="button" class="btn btn-danger" @click="removeComposition(index)">🗑️</button>
@@ -140,12 +140,12 @@
               </div>
 
               <button type="button" class="btn btn-secondary mt-2" @click="addComposition">
-                ➕ Adicionar Matéria-Prima
+                ➕ Add Raw Material
               </button>
 
               <div class="mt-4">
-                <button type="submit" class="btn btn-primary">Salvar</button>
-                <button type="button" class="btn btn-secondary ms-2" @click="closeModal">Cancelar</button>
+                <button type="submit" class="btn btn-primary">Save</button>
+                <button type="button" class="btn btn-secondary ms-2" @click="closeModal">Cancel</button>
               </div>
             </form>
           </div>
@@ -182,7 +182,7 @@ export default {
     });
 
     const formatCurrency = (value) => {
-      return value?.toFixed(2).replace('.', ',') || '0,00';
+      return value?.toFixed(2) || '0.00';
     };
 
     const loadProducts = async () => {
@@ -192,7 +192,7 @@ export default {
         products.value = response.data;
         error.value = null;
       } catch (err) {
-        error.value = 'Erro ao carregar produtos';
+        error.value = 'Error loading products';
         console.error(err);
       } finally {
         loading.value = false;
@@ -204,7 +204,7 @@ export default {
         const response = await rawMaterialApi.getAll();
         rawMaterials.value = response.data;
       } catch (err) {
-        console.error('Erro ao carregar matérias-primas:', err);
+        console.error('Error loading raw materials:', err);
       }
     };
 
@@ -230,7 +230,6 @@ export default {
       await loadRawMaterials();
       selectedProduct.value = product;
       
-      // Buscar composição detalhada
       try {
         const response = await productApi.getComposition(product.id);
         form.value = {
@@ -246,7 +245,7 @@ export default {
         editing.value = true;
         showProductModal.value = true;
       } catch (err) {
-        alert('Erro ao carregar composição do produto');
+        alert('Error loading product composition');
       }
     };
 
@@ -257,17 +256,17 @@ export default {
         selectedComposition.value = response.data;
         showCompositionModal.value = true;
       } catch (err) {
-        alert('Erro ao carregar composição');
+        alert('Error loading composition');
       }
     };
 
     const confirmDelete = async (product) => {
-      if (confirm(`Deseja realmente deletar ${product.name}?`)) {
+      if (confirm(`Are you sure you want to delete ${product.name}?`)) {
         try {
           await productApi.delete(product.id);
           await loadProducts();
         } catch (err) {
-          alert('Erro ao deletar: ' + (err.response?.data?.error || err.message));
+          alert('Error deleting: ' + (err.response?.data?.error || err.message));
         }
       }
     };
@@ -285,16 +284,14 @@ export default {
 
     const saveProduct = async () => {
       try {
-        // Validar composição
         if (form.value.composition.length === 0) {
-          alert('Adicione pelo menos uma matéria-prima à composição');
+          alert('Add at least one raw material to the composition');
           return;
         }
 
-        // Validar se todos os campos da composição estão preenchidos
         for (const item of form.value.composition) {
           if (!item.rawMaterialCode || item.requiredQuantity <= 0) {
-            alert('Preencha todos os campos da composição corretamente');
+            alert('Please fill all composition fields correctly');
             return;
           }
         }
@@ -308,7 +305,7 @@ export default {
         await loadProducts();
         closeModal();
       } catch (err) {
-        alert('Erro ao salvar: ' + (err.response?.data?.error || err.message));
+        alert('Error saving: ' + (err.response?.data?.error || err.message));
       }
     };
 
