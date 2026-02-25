@@ -1,15 +1,15 @@
 <template>
   <div class="container mt-4">
-    <h1>🏭 Sistema de Controle de Estoque</h1>
-    <p class="lead">Gerencie suas matérias-primas e otimize sua produção</p>
+    <h1>🏭 Inventory Control System</h1>
+    <p class="lead">Manage your raw materials and optimize your production</p>
 
     <div class="row mt-5">
       <div class="col-md-4">
         <div class="card">
           <div class="card-body">
-            <h5 class="card-title">📦 Matérias-Primas</h5>
-            <p class="card-text">Cadastre e gerencie o estoque de matérias-primas</p>
-            <router-link to="/raw-materials" class="btn btn-primary">Acessar</router-link>
+            <h5 class="card-title">📦 Raw Materials</h5>
+            <p class="card-text">Register and manage raw material stock</p>
+            <router-link to="/raw-materials" class="btn btn-primary">Access</router-link>
           </div>
         </div>
       </div>
@@ -17,9 +17,9 @@
       <div class="col-md-4">
         <div class="card">
           <div class="card-body">
-            <h5 class="card-title">📋 Produtos</h5>
-            <p class="card-text">Cadastre produtos e suas composições</p>
-            <router-link to="/products" class="btn btn-primary">Acessar</router-link>
+            <h5 class="card-title">📋 Products</h5>
+            <p class="card-text">Register products and their compositions</p>
+            <router-link to="/products" class="btn btn-primary">Access</router-link>
           </div>
         </div>
       </div>
@@ -27,9 +27,9 @@
       <div class="col-md-4">
         <div class="card">
           <div class="card-body">
-            <h5 class="card-title">🎯 Otimização</h5>
-            <p class="card-text">Descubra os produtos mais lucrativos</p>
-            <router-link to="/optimize" class="btn btn-primary">Acessar</router-link>
+            <h5 class="card-title">🎯 Optimization</h5>
+            <p class="card-text">Discover the most profitable products</p>
+            <router-link to="/optimize" class="btn btn-primary">Access</router-link>
           </div>
         </div>
       </div>
